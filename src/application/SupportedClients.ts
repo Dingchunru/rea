@@ -160,17 +160,57 @@ const vscodeUserDirectory = ({
   return join(absoluteUserData, "User");
 };
 
-const traeUserDirectory = ({
+/** Trae regional distributions keep separate user-data roots and skill homes. */
+const traeDistributions = [
+  { application: "TRAE SOLO CN", skillDirectory: ".trae-cn" },
+  { application: "Trae CN", skillDirectory: ".trae-cn" },
+] as const;
+
+const traeDefaultDistribution = {
+  application: "Trae",
+  skillDirectory: ".trae",
+} as const;
+
+/** The directory holding one user-data root per installed Trae distribution. */
+const traeUserDataRoot = ({
   home,
   platform,
   env,
 }: ClientPathContext): string => {
-  if (platform === "win32")
-    return join(windowsAppDataRoots(home, env).roaming, "Trae", "User");
+  if (platform === "win32") return windowsAppDataRoots(home, env).roaming;
   if (platform === "darwin")
-    return join(home, "Library", "Application Support", "Trae", "User");
-  return join(xdgConfigHome({ home, platform, env }), "Trae", "User");
+    return join(home, "Library", "Application Support");
+  return xdgConfigHome({ home, platform, env });
 };
+
+/**
+ * A distribution is applicable when it holds mcp.json, then when it holds a
+ * user directory at all; the international build remains the default so hosts
+ * without either CN distribution resolve exactly as before.
+ */
+const traeDistribution = (context: ClientPathContext) => {
+  const root = traeUserDataRoot(context);
+  const candidates = [...traeDistributions, traeDefaultDistribution];
+  return (
+    candidates.find(({ application }) =>
+      existsSync(join(root, application, "User", "mcp.json")),
+    ) ??
+    candidates.find(({ application }) =>
+      existsSync(join(root, application, "User")),
+    ) ??
+    traeDefaultDistribution
+  );
+};
+
+const traeUserDirectory = (context: ClientPathContext): string =>
+  join(
+    traeUserDataRoot(context),
+    traeDistribution(context).application,
+    "User",
+  );
+
+const traeSkillDirectory = (context: ClientPathContext): string =>
+  join(context.home, traeDistribution(context).skillDirectory, "skills");
 
 /** Windows packaging decides which file Claude Desktop reads; see its resolver. */
 const claudeDesktopLocation = (
@@ -837,7 +877,7 @@ export const SUPPORTED_CLIENT_DEFINITIONS = [
       stdio: [{ kind: "present", field: "url" }],
     },
     displayName: "Trae",
-    skillPath: [".trae", "skills"],
+    skillPath: traeSkillDirectory,
     configPath: (context: ClientPathContext) =>
       join(traeUserDirectory(context), "mcp.json"),
     markerPath: traeUserDirectory,

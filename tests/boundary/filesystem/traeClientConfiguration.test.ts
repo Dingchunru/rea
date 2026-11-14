@@ -85,6 +85,61 @@ describe("Trae configuration paths", () => {
   });
 });
 
+describe("Trae distribution selection", () => {
+  // Probe roots follow the host's path flavour; macOS has no XDG root here.
+  const platform = process.platform === "darwin" ? "linux" : process.platform;
+
+  it("prefers TRAE SOLO CN and its .trae-cn skill home", async () => {
+    const root = await createTestTempDirectory("rea-trae-dist-");
+    const soloUser = join(root, "TRAE SOLO CN", "User");
+    await mkdir(soloUser, { recursive: true });
+    await writeFile(join(soloUser, "mcp.json"), "{}");
+    await mkdir(join(root, "Trae", "User"), { recursive: true });
+    const env = { XDG_CONFIG_HOME: root, APPDATA: root };
+
+    expect(traePath("/home/a", platform, env)?.configPath).toBe(
+      join(soloUser, "mcp.json"),
+    );
+    expect(traePath("/home/a", platform, env)?.markerPath).toBe(soloUser);
+    expect(
+      skillDestinations("/home/a", ["trae"], env, platform).map(
+        ({ path }) => path,
+      ),
+    ).toEqual([
+      join("/home/a", ".trae-cn", "skills", "reverse-engineer-anything"),
+    ]);
+  });
+
+  it("prefers mcp.json over a bare user directory", async () => {
+    const root = await createTestTempDirectory("rea-trae-dist-");
+    await mkdir(join(root, "Trae CN", "User"), { recursive: true });
+    const internationalUser = join(root, "Trae", "User");
+    await mkdir(internationalUser, { recursive: true });
+    await writeFile(join(internationalUser, "mcp.json"), "{}");
+    const env = { XDG_CONFIG_HOME: root, APPDATA: root };
+
+    expect(traePath("/home/a", platform, env)?.configPath).toBe(
+      join(internationalUser, "mcp.json"),
+    );
+  });
+
+  it("keeps the international defaults when no distribution exists", async () => {
+    const root = await createTestTempDirectory("rea-trae-dist-");
+    const env = { XDG_CONFIG_HOME: root, APPDATA: root };
+
+    expect(traePath("/home/a", platform, env)?.configPath).toBe(
+      join(root, "Trae", "User", "mcp.json"),
+    );
+    expect(
+      skillDestinations("/home/a", ["trae"], env, platform).map(
+        ({ path }) => path,
+      ),
+    ).toEqual([
+      join("/home/a", ".trae", "skills", "reverse-engineer-anything"),
+    ]);
+  });
+});
+
 describe("Trae JSON registration", () => {
   const traeClient = async () => {
     const home = await createTestTempDirectory("rea-trae-");

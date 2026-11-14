@@ -728,17 +728,19 @@ there.
 ## Trae
 
 For [Trae](https://docs.trae.ai/ide/add-mcp-servers), setup writes
-`mcpServers.rea` into the user-scope `mcp.json` under Trae's VS Code-style
-user directory (`%APPDATA%\Trae\User` on Windows,
-`~/Library/Application Support/Trae/User` on macOS, and
-`~/.config/Trae/User` elsewhere). Entries carry `command`, `args`, and
-`env`; stdio is the default transport. Trae discovers personal skills from
-`~/.trae/skills` (`%userprofile%\.trae\skills` on Windows), so setup
-installs its skill copy there.
+`mcpServers.rea` into the user-scope `mcp.json` under the selected Trae
+distribution's VS Code-style user directory. Regional builds keep separate
+roots, so setup selects `TRAE SOLO CN`, then `Trae CN`, then the international
+`Trae` build: the first holding `mcp.json` wins, then the first holding a
+`User` directory, and `Trae` remains the default when no CN build is present.
+Windows resolves those roots under `%APPDATA%`, macOS under
+`~/Library/Application Support`, and other platforms under `~/.config`.
+Entries carry `command`, `args`, and `env`; stdio is the default transport.
+Setup installs the skill copy into the selected build's home: `~/.trae-cn/skills`
+for either CN build and `~/.trae/skills` for the international build.
 
 The user-level MCP paths follow the editor's VS Code layout. Trae's official
-documentation describes the raw JSON editor without specifying those paths;
-loading this registration in Trae remains unverified.
+documentation describes the raw JSON editor without specifying those paths.
 
 ## CodeBuddy
 
