@@ -60,35 +60,15 @@ and skip rules stay enabled. Sandbox startup failures remain actionable errors;
 REA does not retry with `--no-sandbox`. Missing extractors reported in a valid
 analysis report retain partial results and dependency names inline.
 
-Upstream sources are preserved unmodified as optional pinned submodules:
-
-```sh
-git submodule update --init third_party/binwalk third_party/unblob
-```
+Upstream sources are vendored unmodified at `third_party/binwalk` and
+`third_party/unblob`; no submodule initialization is required.
 
 Normal REA builds and npm packages do not include or build these sources or
 engine binaries. See [upstream provenance](https://github.com/morluto/rea/blob/main/third_party/README.md).
 
-### Windows submodule checkout
-
-On Windows, the Unblob checkout stops with `error: invalid path`. Several
-upstream test fixture names under `tests/integration/` contain characters,
-trailing dots, or trailing spaces that NTFS does not allow; REA does not use
-those fixtures. Keep the clone, exclude that directory, and retry from the
-repository root in PowerShell:
-
-```powershell
-git -C third_party/unblob config core.protectNTFS false
-git -C third_party/unblob sparse-checkout set --no-cone '/*' '!/tests/integration/'
-git submodule update third_party/unblob
-```
-
-Both settings are required. While `core.protectNTFS` is enabled, Git for
-Windows also rejects index paths that the sparse pattern excludes; the pattern
-keeps the invalid names out of the worktree. The setting applies only to the
-Unblob submodule. In Git Bash, prefix the `sparse-checkout` command with
-`MSYS_NO_PATHCONV=1`; otherwise `!/tests/integration/` is rewritten as a
-Windows path.
+The vendored Unblob tree omits `tests/integration/` and its output fixtures.
+Several upstream names in that directory contain characters, trailing dots, or
+trailing spaces that NTFS does not allow; REA does not use those fixtures.
 
 The extraction destination must be absent with an existing writable parent.
 REA checks that selection before starting an engine and still acquires it

@@ -29,23 +29,12 @@ export async function verifyRepositorySkill({ root, workspace, commands }) {
   const consumer = join(workspace, "skill-consumer");
   const home = join(workspace, "skill-consumer-home");
   const tracked = (
-    await commands.exec(
-      "git",
-      ["ls-files", "--cached", "--format=%(objectmode) %(path)", "-z"],
-      { cwd: root },
-    )
+    await commands.exec("git", ["ls-files", "--cached", "-z"], { cwd: root })
   ).stdout
     .split("\0")
     .filter(Boolean);
-  for (const entry of tracked) {
-    const mode = entry.slice(0, 6);
-    const path = entry.slice(7);
+  for (const path of tracked) {
     const destination = join(snapshot, path);
-    // A GitHub clone without submodule initialization has only these directories.
-    if (mode === "160000") {
-      await mkdir(destination, { recursive: true });
-      continue;
-    }
     await mkdir(dirname(destination), { recursive: true });
     await cp(join(root, path), destination, { verbatimSymlinks: true });
   }

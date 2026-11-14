@@ -7,28 +7,25 @@ application code.
 ## jadx-headless-mcp
 
 - Source: <https://github.com/1013503897/jadx-headless-mcp>
-- Submodule: `third_party/jadx-headless-mcp`
+- Path: `third_party/jadx-headless-mcp`
 - Release: `v0.7.1`
 - Commit: `5844800a486d2248fa949b74c9896285f5b54de2`
-- License: Apache-2.0; see the submodule's `LICENSE`.
+- License: Apache-2.0; see the vendored `LICENSE`.
 - Release identity: `src/android/JadxRelease.ts`.
 - REA integration: `src/android/`; no upstream patches in this version.
 
-Fetch source for inspection with:
+The source is tracked directly in this repository; inspect it at
+`third_party/jadx-headless-mcp`.
 
-```sh
-git submodule update --init third_party/jadx-headless-mcp
-```
-
-Normal REA builds and installed npm packages do not require this submodule or a
+Normal REA builds and installed npm packages do not require these sources or a
 Gradle build. Supply a separately obtained JAR with `REA_JADX_MCP_JAR`; REA never
 downloads engines during an analysis operation. The audited release JAR is
 identified by SHA-256. A caller-supplied build reporting the supported protocol
 version retains its actual digest and an unknown source revision unless its
 bytes match the audited release.
 
-When updating: review upstream protocol and license changes, update the gitlink
-and release identity together, exercise the adapter's producer regressions, and
+When updating: review upstream protocol and license changes, update the vendored
+source and release identity together, exercise the adapter's producer regressions, and
 run the real APK CLI/MCP lane. Never attribute modified engine bytes to the
 audited source revision.
 
@@ -56,5 +53,5 @@ version output alone does not establish source identity. REA does not bundle
 extractors or download/install firmware engines during analysis.
 
 On updates: inspect actual pinned CLI and report producers, preserve licenses,
-update gitlinks/release records, run report regressions and the real firmware
+update the vendored sources and release records, run report regressions and the real firmware
 lane. See [firmware setup and coverage](../docs/guides/firmware/firmware-analysis.md).

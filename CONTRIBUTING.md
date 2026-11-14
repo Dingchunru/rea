@@ -305,11 +305,6 @@ file is open, they instead verify the refusal and cleanup. See
 [testing](docs/development/testing.md#developer-commands) for command scopes
 and lane selection.
 
-`git submodule update --init --recursive` fails at the pinned Unblob submodule
-on Windows and can leave later submodules unchecked out. Apply the
-[Unblob checkout workaround](docs/guides/firmware/firmware-analysis.md#windows-submodule-checkout),
-then rerun the command.
-
 ## Documentation website
 
 Use the [documentation directory](docs/README.md) and

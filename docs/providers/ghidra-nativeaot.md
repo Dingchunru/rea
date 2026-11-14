@@ -11,8 +11,8 @@ labels, functions, or memory bytes. The hydration semantics are adapted from
 [`licenses/nativeaot-parser-MIT.txt`](https://github.com/morluto/rea/blob/main/licenses/nativeaot-parser-MIT.txt).
 
 The optional headless Ghidra adapter remains available for database annotations
-and broader recovery. It uses the same pinned upstream commit as an opt-in
-submodule and is a separate, more capable workflow.
+and broader recovery. It uses the same pinned upstream commit, tracked in
+`third_party/ghidra-nativeaot`, and is a separate, more capable workflow.
 
 The parser currently handles x64 PE32+ and RTR 9.1, including bounded
 DEHYDRATED_DATA processing, MethodTable relationships, virtual slots, and
@@ -34,7 +34,6 @@ existing `git`, `javac` and `jar`; it does not invoke Gradle, download toolchain
 or change host configuration:
 
 ```sh
-git submodule update --init third_party/ghidra-nativeaot
 npm run build:ghidra:nativeaot
 export REA_GHIDRA_NATIVEAOT_JAR="$PWD/_reference/nativeaot-integration/extension/rea-ghidra-nativeaot.jar"
 ```

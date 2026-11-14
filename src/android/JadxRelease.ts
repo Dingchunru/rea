@@ -1,5 +1,5 @@
 // Imported directly by pre-install fixture scripts; keep this module dependency-free.
-/** Audited upstream release; source remains unmodified in the Git submodule. */
+/** Audited upstream release; source remains unmodified in `third_party/jadx-headless-mcp`. */
 export const JADX_RELEASE = Object.freeze({
   version: "0.7.1",
   revision: "5844800a486d2248fa949b74c9896285f5b54de2",
