@@ -80,7 +80,7 @@ Use [.nvmrc](.nvmrc) and `package.json#packageManager` for the pinned toolchain.
 - `npm run build:cached`: build the runtime and packaged skill.
 - `npm run test:local -- PATH...`: source tests without building.
 - `npm run test:focused -- PATH...`: exact tests with their required artifacts.
-- `npm run check:fast`: cached typecheck/lint and the pre-push check.
+- `npm run check:fast`: cached typecheck and lint.
 - `npm run docs:check`: validate generated documentation.
 
 Use relevant checks for the change. The complete local gate, `npm run check:pr`, is optional for broad changes or CI diagnosis. See [CONTRIBUTING.md](CONTRIBUTING.md) for development, generated-file ownership, and release conventions.

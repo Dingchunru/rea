@@ -256,7 +256,7 @@ npm ci
 npm run check:fast
 ```
 
-`npm ci` installs the exact dependencies and prepares the Husky hooks without
+`npm ci` installs the exact dependencies without
 building the project. Run `npm run build:cached` when you need the standalone
 CLI or MCP server; it compiles the runtime and bundles the authored skill.
 `npm run build` forces those tasks to rerun. Neither command generates test
@@ -387,8 +387,6 @@ It guides reproduction and comparable measurements before changing checks.
 `check:pr` reuses build and static-check outputs while executing the test suite
 fresh, including the fast Python producer checks. `docs:check` also runs the
 onboarding example consistency suite for README-only changes.
-
-Pre-commit formats and lints staged files; pre-push runs `check:fast`.
 
 ### Generated files and command ownership
 

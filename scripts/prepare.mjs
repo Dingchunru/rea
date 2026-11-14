@@ -28,12 +28,3 @@ if (await sourceDependencyIsAvailable("release-please/package.json")) {
     await import("./lib/release-proposal.mjs");
   await applyReleasePleasePatch();
 }
-
-if (
-  process.env.HUSKY !== "0" &&
-  (await sourceDependencyIsAvailable("husky/index.js"))
-) {
-  const { default: installHusky } = await import("husky");
-  const message = installHusky();
-  if (message.length > 0) process.stdout.write(`${message}\n`);
-}
