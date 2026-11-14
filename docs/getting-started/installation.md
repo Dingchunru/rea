@@ -613,20 +613,43 @@ through a reviewed, scoped setup plan, then restart/reconnect the agent.
 
 ### Run REA from a checkout
 
-To run code that is not released yet, build a checkout with the Node.js
-version in `.nvmrc`:
+To run code that is not released yet, build a checkout of this mirror with the
+Node.js version in `.nvmrc`. The checkout is a single tree: it has no
+submodules, Git LFS entries, or commit hooks, so a plain clone is complete.
 
 ```bash
-git clone https://github.com/morluto/rea.git
+git clone https://github.com/Dingchunru/rea.git
 cd rea
 npm ci
 npm run build:cached
+```
+
+If `npm ci` stalls against a private registry, or a slow link resets
+connections, retry against the public registry with bounded concurrency:
+
+```bash
+npm ci --registry=https://registry.npmjs.org --maxsockets=3 \
+  --fetch-retries=6 --fetch-retry-mintimeout=20000 \
+  --fetch-retry-maxtimeout=120000
 ```
 
 Then run `npm link` once in the checkout to put its `rea` on your `PATH`, or,
 wherever these docs say `rea …`, run
 `node /absolute/path/to/rea/scripts/rea.mjs …`. Setup run this way registers
 the checkout's `scripts/rea.mjs` with your agents.
+
+Review the plan, then apply the registration and matching skill in one pass:
+
+```bash
+node scripts/rea.mjs setup --dry-run --json
+node scripts/rea.mjs setup --yes --all-detected --json
+```
+
+Run setup in the environment the agent runs in. A Windows client needs a
+Windows registration and a Linux/WSL client needs a Linux registration, because
+each entry records that runtime's absolute paths. Trae selects the regional
+distribution that owns the client configuration and installs the skill beside
+it; see [Trae](client-configuration.md#trae) for the selected roots.
 
 After `git pull`, run `npm ci` and `npm run build:cached` again. If the
 checkout's skill changed, refresh each installed copy before restarting its
